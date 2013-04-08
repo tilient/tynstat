@@ -2,7 +2,8 @@ Useage
 ------
 
 Run *tynstat_32* or *tynstat_64* on a server.
-*tynstad_32* and *tynstad_64* run as daemon.
+
+*tynstad_32* and *tynstad_64* are the daemonized versions.
 
 To get stats info about the server in HTML format, point your browser 
 to: `http://servername:27272/html`
@@ -36,17 +37,17 @@ just ignore the errors or comment out the lines you don't want.
 Files
 -----
 
-tynstat.lua : source code
-make.sh     : script to build executables
-readme.md   : this file
+- tynstat.lua : source code
+- make.sh     : script to build executables
+- readme.md   : this file
 
-llj_32bit.a : patched version of 32-bit version luajit library
-llj_64bit.a : patched version of 64-bit version luajit library
+- llj_32bit.a : patched version of 32-bit version luajit library
+- llj_64bit.a : patched version of 64-bit version luajit library
 
-tynstat_32  : executable, 32 bit
-tynstat_64  : executable, 64 bit
-tynstad_32  : executable, 32 bit, daemonized
-tynstad_64  : executable, 64 bit, daemonized
+- tynstat_32  : executable, 32 bit
+- tynstat_64  : executable, 64 bit
+- tynstad_32  : executable, 32 bit, daemonized
+- tynstad_64  : executable, 64 bit, daemonized
 
 Contact
 -------
