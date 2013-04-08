@@ -135,13 +135,7 @@ function handleIncomingConnections(port, handler)
   local listen_socket = listenSocket(port);
   while true do
     local s = C.accept4(listen_socket, nil, nil, 0);
-    ---- debug
-    --print(">>>");
-    ----
     local status, err = pcall(handler, s);
-    ---- debug
-    --print("<<<");
-    ----
     pcall(C.close, s);
     ---- usefull during debugging
     --if not status then
