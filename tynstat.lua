@@ -264,7 +264,7 @@ function collectStats()
   collectLoadStats(stats);
   collectMemStats(stats);
   collectDfStats(stats);
-  collectPsStats(stats);
+  --collectPsStats(stats);
   return stats;
 end
 
