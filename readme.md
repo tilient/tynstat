@@ -29,8 +29,8 @@ sure your build environment can deal with that. E.g. for Ubuntu
 make sure you installed the multilib version of g++.
 (`sudo apt-get install g++-multilib`).
 
-If all of this is installed, run `sh make.sh` to build *tynstat_32* 
-and *tynstat_64*.
+If all this is properly installed, run `sh make.sh` to build 
+*tynstat_32*,  *tynstat_64*. *tynstad_32* and *tynstad_64*.
 
 If you don't care about the different bit-versions, 
 just ignore the errors or comment out the lines you don't want.
