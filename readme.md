@@ -2,6 +2,7 @@ Useage
 ------
 
 Run *tynstat_32* or *tynstat_64* on a server.
+*tynstad_32* and *tynstad_64* run as daemon.
 
 To get stats info about the server in HTML format, point your browser 
 to: `http://servername:27272/html`
@@ -28,9 +29,24 @@ make sure you installed the multilib version of g++.
 If all of this is installed, run `sh make.sh` to build *tynstat_32* 
 and *tynstat_64*.
 
-If you don't care about the different versions, just ignore the errors
-or comment out the lines you don't want.
+If you don't care about the different bit-versions, 
+just ignore the errors or comment out the lines you don't want.
 
+
+Files
+-----
+
+tynstat.lua : source code
+make.sh     : script to build executables
+readme.md   : this file
+
+llj_32bit.a : patched version of 32-bit version luajit library
+llj_64bit.a : patched version of 64-bit version luajit library
+
+tynstat_32  : executable, 32 bit
+tynstat_64  : executable, 64 bit
+tynstad_32  : executable, 32 bit, daemonized
+tynstad_64  : executable, 64 bit, daemonized
 
 Contact
 -------
