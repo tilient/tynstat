@@ -1,5 +1,5 @@
-Useage
-------
+Usage
+-----
 
 Run *tynstat_32* or *tynstat_64* on a server.
 
@@ -14,7 +14,7 @@ at: `http://servername:27272/json`
 Note
 ----
 
-This is only tested on a 64-bit and 32-bit Ubuntu 12.04.
+This is only tested on Ubuntu 12.04.
 
 
 Building it
@@ -42,8 +42,8 @@ Files
 - tynstat.lua : source code
 - make.sh     : script to build executables
 - readme.md   : this file
-- llj_32bit.a : patched version of 32-bit version luajit library
-- llj_64bit.a : patched version of 64-bit version luajit library
+- llj_32bit.a : patched version of 32-bit luajit library
+- llj_64bit.a : patched version of 64-bit luajit library
 - tynstat_32  : executable, 32 bit
 - tynstat_64  : executable, 64 bit
 - tynstad_32  : executable, 32 bit, daemonized
