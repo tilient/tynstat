@@ -135,14 +135,17 @@ function handleIncomingConnections(port, handler)
   local listen_socket = listenSocket(port);
   while true do
     local s = C.accept4(listen_socket, nil, nil, 0);
-    local status, err = pcall(handler, s);
-    pcall(C.close, s);
-    ---- usefull during debugging
-    --if not status then
-    --  print("ERROR: " .. err);
-    --end
-    ----
-    collectgarbage("collect");
+    if s > 0 then
+      local status, err = pcall(handler, s);
+      pcall(C.close, s);
+      collectgarbage("collect");
+      if not status then
+        print("** ERROR **", err);
+      end
+    else
+      print("** ERROR ** bad return from accept4");
+      return;
+    end
   end
 end
 
@@ -151,10 +154,14 @@ end
 function readLine(fd)
   local buf = ffi.new("char[?]", 1024);
   local numBytesRead = 0;
-  while true do
+  local retryCount = 4000;
+  while retryCount > 0 do
     local res = C.read(fd, buf + numBytesRead, 1);
     if res < 0 then
       error("ERROR in readLine: " .. ffi.errno());
+    elseif res == 0 then
+      retryCount = retryCount - 1;
+      C.usleep(10);
     elseif res == 1 then
       local ch = buf[numBytesRead];
       if ch == 13 then
@@ -162,13 +169,16 @@ function readLine(fd)
       elseif ch == 10 then
         return ffi.string(buf, numBytesRead);
       else
-        numBytesRead = numBytesRead + res;
+        numBytesRead = numBytesRead + 1;
       end
       if numBytesRead > 1023 then
         error("ERROR in readLine : buffer too small");
       end
+    else
+      error("ERROR in readLine : received too many chars");
     end
   end
+  error("ERROR in readLine : too many retries");
 end
 
 function writeBytes(fd, bytes, nrOfBytes)
@@ -181,6 +191,7 @@ function writeBytes(fd, bytes, nrOfBytes)
       error("Error in writeBytes : " .. ffi.errno());
     end
     nrOfBytesWritten = tonumber(nrOfBytesWritten + res);
+    C.usleep(10);
   end
 end
 
@@ -384,7 +395,8 @@ function handler(s)
   local uri = readLine(s):match("GET%s+([%w/%.]+)%s+") or "/";
 
   -- ignore all the headers
-  repeat until readLine(s):len() <= 0;
+  local cnt = 5000;
+  repeat cnt = cnt - 1; until (cnt < 0) or (readLine(s):len() <= 0);
 
   if uri == "/html" then
     writeString(s, "HTTP/1.0 200 OK\r\n");
