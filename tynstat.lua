@@ -138,9 +138,10 @@ function handleIncomingConnections(port, handler)
     local status, err = pcall(handler, s);
     pcall(C.close, s);
     ---- usefull during debugging
-    --if not status then
-    --  print("ERROR: " .. err);
-    --end
+    if not status then
+      print("ERROR: " .. err);
+    end
+    ----
     collectgarbage("collect");
   end
 end
@@ -218,7 +219,7 @@ function collectMemStats(stats)
   local stts = {};
   stats.meminfo = stts; 
   for line in io.lines("/proc/meminfo") do
-    local k, v = line:match("([%w%(%)]+):%s+([%d%.]+)%s");
+    local k, v = line:match("([%w%(%)]+):%s+([%d%.]+)");
       stts[k] = tonumber(v);
   end
 end
