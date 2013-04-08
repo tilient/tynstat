@@ -4,7 +4,9 @@
 --
 -- Tiny Stats Server
 --
--- wiffel@tilient.org
+--   github.com/wiffel/tynstat
+--
+--   wiffel@tilient.org
 --
 ----------------------------------------------------------------------------
 
@@ -73,6 +75,7 @@ ffi.cdef [[
              fd_set *exceptfds, timeval *timeout);
 
   void usleep(uint32_t usecs);
+  int daemon(int nochdir, int noclose);
   pid_t fork();
   int mkfifo(const char *pathname, mode_t mode); 
   int remove(const char *pathname);
@@ -415,6 +418,7 @@ function handler(s)
   end
 end
 
+C.daemon(0, 0);
 handleIncomingConnections(27272, handler);
 
 ----------------------------------------------------------------------------
