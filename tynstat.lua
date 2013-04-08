@@ -135,12 +135,18 @@ function handleIncomingConnections(port, handler)
   local listen_socket = listenSocket(port);
   while true do
     local s = C.accept4(listen_socket, nil, nil, 0);
+    ---- debug
+    --print(">>>");
+    ----
     local status, err = pcall(handler, s);
+    ---- debug
+    --print("<<<");
+    ----
     pcall(C.close, s);
     ---- usefull during debugging
-    if not status then
-      print("ERROR: " .. err);
-    end
+    --if not status then
+    --  print("ERROR: " .. err);
+    --end
     ----
     collectgarbage("collect");
   end
@@ -241,20 +247,18 @@ end
 function collectPsStats(stats)
   local stts = {};
   stats.ps = stts;
-  local pr = io.popen("ps aux");
+  local pr = io.popen("ps -e -o pcpu,pmem,vsize,rss,cputime,user,args " .. 
+                      "--sort -pcpu | head -10");
   pr:read("*line");
   for str in pr:lines() do
     local st = {};
     stts[#stts+1] = st;
-    st.user, st.pid, st.cpu, st.mem, st.vsz, st.rss, st.tty,
-    st.stat, st.start, st.time, st.cmd =
-      str:match("(%w+)%s+(%d+)%s+([%d%.]+)%s+([%d%.]+)%s+" ..
-                "(%d+)%s+(%d+)%s+([%w%/%?]+)%s+([%w%+]+)%s+" ..
-                "([%w%:]+)%s+([%d%:]+)%s+(.*)$");
-    st.cpu = tonumber(st.cpu);
-    st.mem = tonumber(st.mem);
-    st.rss = tonumber(st.rss);
-    st.vsz = tonumber(st.vsz);
+    st.pcpu, st.pmem, st.vsize, st.rss, st.cputime, st.user, st.args =
+      str:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(.-)%s*$");
+    st.pcpu  = tonumber(st.pcpu);
+    st.pmem  = tonumber(st.pmem);
+    st.vsize = tonumber(st.vsize);
+    st.rss   = tonumber(st.rss);
   end
 end
 
@@ -264,7 +268,7 @@ function collectStats()
   collectLoadStats(stats);
   collectMemStats(stats);
   collectDfStats(stats);
-  --collectPsStats(stats);
+  collectPsStats(stats);
   return stats;
 end
 
