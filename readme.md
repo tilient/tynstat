@@ -1,14 +1,12 @@
 Usage
 -----
 
-Run *tynstat_32* or *tynstat_64* on a server.
+Run *tynstat* or *tynstad* (daemonized version) on a server.
 
 To get stats info about the server in HTML format, point your browser 
 to: `http://servername:27272/html`
 To get the stat info about the server as a JSON file, point 
 at: `http://servername:27272/json`
-
-*tynstad_32* and *tynstad_64* are the daemonized versions.
 
 
 Note
@@ -30,7 +28,7 @@ make sure you installed the multilib version of g++.
 (`sudo apt-get install g++-multilib`).
 
 If all this is properly installed, run `sh make.sh` to build 
-*tynstat_32*,  *tynstat_64*. *tynstad_32* and *tynstad_64*.
+all executables.
 
 If you don't care about the different bit-versions, 
 just ignore the errors or comment out the lines you don't want.
@@ -39,15 +37,15 @@ just ignore the errors or comment out the lines you don't want.
 Files
 -----
 
-- tynstat.lua : source code
-- make.sh     : script to build executables
-- readme.md   : this file
-- llj_32bit.a : patched version of 32-bit luajit library
-- llj_64bit.a : patched version of 64-bit luajit library
-- tynstat_32  : executable, 32 bit
-- tynstat_64  : executable, 64 bit
-- tynstad_32  : executable, 32 bit, daemonized
-- tynstad_64  : executable, 64 bit, daemonized
+- readme.md          : this file
+- make.sh            : script to build executables
+- src/tynstat.lua    : source code
+- lib/llj_32bit.a    : patched version of 32-bit luajit library
+- lib/llj_64bit.a    : patched version of 64-bit luajit library
+- bin/64bit/tynstat  : executable, 64 bit
+- bin/64bit/tynstad  : executable, 64 bit, daemonized
+- bin/32bit/tynstat  : executable, 32 bit
+- bin/32bit/tynstad  : executable, 32 bit, daemonized
 
 Contact
 -------
