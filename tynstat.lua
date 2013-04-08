@@ -16,7 +16,7 @@ ffi.cdef [[
   typedef uint32_t mode_t;
   typedef uint32_t size_t;
   typedef uint32_t off_t;
-  typedef int64_t  ssize_t;
+  typedef intptr_t  ssize_t;
   typedef uint32_t fd_set;
 
   typedef struct {
