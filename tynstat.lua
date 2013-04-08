@@ -127,7 +127,7 @@ function listenSocket(port)
   C.setsockopt(s, SOL_SOCKET, SO_REUSEDDR, on, ffi.sizeof(on));
 
   local res = C.bind(s, sa, saLen);
-  C.listen(s, 32);
+  C.listen(s, 12);
   return s;
 end
 
@@ -154,14 +154,14 @@ end
 function readLine(fd)
   local buf = ffi.new("char[?]", 1024);
   local numBytesRead = 0;
-  local retryCount = 4000;
+  local retryCount = 100;
   while retryCount > 0 do
     local res = C.read(fd, buf + numBytesRead, 1);
     if res < 0 then
       error("ERROR in readLine: " .. ffi.errno());
     elseif res == 0 then
       retryCount = retryCount - 1;
-      C.usleep(10);
+      C.usleep(100);
     elseif res == 1 then
       local ch = buf[numBytesRead];
       if ch == 13 then
@@ -258,10 +258,10 @@ function collectPsStats(stats)
   for str in pr:lines() do
     local st = {};
     stts[#stts+1] = st;
-    st.pcpu, st.pmem, st.vsize, st.rss, st.cputime, st.user, st.args =
+    st.cpu, st.mem, st.vsize, st.rss, st.cputime, st.user, st.args =
       str:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(.-)%s*$");
-    st.pcpu  = tonumber(st.pcpu);
-    st.pmem  = tonumber(st.pmem);
+    st.cpu   = 0.01 * tonumber(st.cpu);
+    st.mem   = 0.01 * tonumber(st.mem);
     st.vsize = tonumber(st.vsize);
     st.rss   = tonumber(st.rss);
   end
