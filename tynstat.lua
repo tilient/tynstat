@@ -418,8 +418,17 @@ function handler(s)
   end
 end
 
-C.daemon(0, 0);
-handleIncomingConnections(27272, handler);
+
+----------------------------------------------------------------------------
+
+function daemain()
+  C.daemon(0, 0);
+  main();
+end
+
+function main()
+  handleIncomingConnections(27272, handler);
+end
 
 ----------------------------------------------------------------------------
 
