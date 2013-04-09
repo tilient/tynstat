@@ -21,8 +21,10 @@ Download
 --------
 
 [tynstat 64-bit](https://raw.github.com/wiffel/tynstat/master/bin/64bit/tynstat)
+`wget https://raw.github.com/wiffel/tynstat/master/bin/64bit/tynstat`
 
 [tynstat 32-bit](https://raw.github.com/wiffel/tynstat/master/bin/32bit/tynstat)
+`wget https://raw.github.com/wiffel/tynstat/master/bin/32bit/tynstat`
 
 
 Building it
