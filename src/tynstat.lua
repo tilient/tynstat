@@ -421,14 +421,37 @@ end
 
 ----------------------------------------------------------------------------
 
-function daemain()
-  C.daemon(0, 0);
-  main();
+config = {
+  port      = 27272;
+  daemonize = false;
+};
+
+function handleArgs()
+  local i = 1;
+  local cmd = arg[i];
+  while cmd do
+    if cmd == "-d" then
+      config.daemonize = true;
+    end
+    if cmd == "-p" then
+      i = i + 1;
+      local port = arg[i];
+      config.port = port and tonumber(port) or config.port;
+    end
+    i = i + 1;
+    cmd = arg[i];
+  end
 end
 
 function main()
-  handleIncomingConnections(27272, handler);
+  handleArgs();
+  if config.daemonize then
+    C.daemon(0, 0);
+  end
+  handleIncomingConnections(config.port, handler);
 end
+
+main();
 
 ----------------------------------------------------------------------------
 
