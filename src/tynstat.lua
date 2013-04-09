@@ -212,8 +212,8 @@ end
 function collectUptimeStats(stats)
   local stts = {};
   stats.uptime = stts; 
-  local str = io.open("/proc/uptime"):read("*a");
-  stts.seconds, stts.idle = str:match("([%d%.]+)%s*([%d%.]+)");
+  stts.seconds, stts.idle = 
+    io.open("/proc/uptime"):read("*a"):match("([%d%.]+)%s*([%d%.]+)");
   stts.seconds = tonumber(stts.seconds);
   stts.idle = tonumber(stts.idle);
 end
@@ -221,11 +221,10 @@ end
 function collectLoadStats(stats)
   local stts = {};
   stats.loadavg = stts; 
-  local str = io.open("/proc/loadavg"):read("*a");
-  stts.load1min, stts.load5min, stts.load15min = 
-    str:match("([%d%.]+)%s+([%d%.]+)%s+([%d%.]+)");
-  stts.load1min = tonumber(stts.load1min);
-  stts.load5min = tonumber(stts.load5min);
+  stts.load1min, stts.load5min, stts.load15min = io.open(
+    "/proc/loadavg"):read("*a"):match("([%d%.]+)%s+([%d%.]+)%s+([%d%.]+)");
+  stts.load1min  = tonumber(stts.load1min);
+  stts.load5min  = tonumber(stts.load5min);
   stts.load15min = tonumber(stts.load15min);
 end
 
