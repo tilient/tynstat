@@ -17,6 +17,13 @@ Note
 
 This is only tested on Ubuntu 12.04.
 
+Download
+--------
+
+[tynstat 64-bit](https://raw.github.com/wiffel/tynstat/master/bin/64bit/tynstat)
+
+[tynstat 32-bit](https://raw.github.com/wiffel/tynstat/master/bin/32bit/tynstat)
+
 
 Building it
 -----------
