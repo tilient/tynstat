@@ -9,8 +9,8 @@ To get the stat info about the server as a JSON file, point
 at: `http://servername:27272/json`
 
 options:
-- -d : run as daemon
-- -p <port> : listen at <port> instead of 27272
+- `-d` : run as daemon
+- `-p <port>` : listen at `<port>` instead of `27272`
 
 Note
 ----
