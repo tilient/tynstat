@@ -54,7 +54,7 @@ ffi.cdef [[
   int setsockopt(int s, int level, int optname, 
                  const void *optval, socklen_t optlen);
   int listen(int sockfd, int backlog);
-  int accept4(int sockfd, sock_stor *addr, socklen_t *addrlen, int flags);
+  int accept(int sockfd, sock_stor *addr, socklen_t *addrlen);
 
   int close(int fd);
   ssize_t read(int fd, void *buf, size_t count);
@@ -159,7 +159,7 @@ end
 function serveRequestsOnPort(port, handler)
   local listen_socket = listenSocket(port);
   while true do
-    local s = C.accept4(listen_socket, nil, nil, 0);
+    local s = C.accept(listen_socket, nil, nil);
     if s > 0 then
       local status, err = pcall(handler, s);
       pcall(C.close, s);
@@ -168,7 +168,7 @@ function serveRequestsOnPort(port, handler)
         print("** ERROR **", err);
       end
     else
-      print("** ERROR ** bad return from accept4");
+      print("** ERROR ** bad return from accept");
       return;
     end
   end
@@ -322,8 +322,10 @@ function stats2htmlLine(stats)
                     " free (", asM(stats.meminfo.MemTotal), " total, ",
                     asM(stats.meminfo.Cached), " cached)<br/>\r\n"});
   local fs = find(stats.df, function(e) return e.mount == "/" end);
-  collectAll(tstr,{"    disk : ", fs.avail, " free (", 
-                   fs.usepercentage, " used of ", fs.size, ")<br/>\r\n"});
+  if fs then
+    collectAll(tstr,{"    disk : ", fs.avail, " free (", 
+                     fs.usepercentage, " used of ", fs.size, ")<br/>\r\n"});
+  end
   collectAll(tstr,{"    swap : ",asM( stats.meminfo.SwapFree), " free (of ",
                     asM(stats.meminfo.SwapTotal), " in total)<br/>\r\n"});
 
