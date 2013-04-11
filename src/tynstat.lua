@@ -238,18 +238,18 @@ end
 ----------------------------------------------------------------------------
 
 function collectInfoStats(stats)
-  local stts = {};
-  stats.info = stts; 
-  stts.hostname = io.popen("hostname"):read("*line");
+  stats.info = {
+    hostname = io.popen("hostname"):read("*line")
+  };
 end
 
 function collectUptimeStats(stats)
-  local stts = {};
-  stats.uptime = stts; 
-  stts.seconds, stts.idle = 
+  local seconds, idle = 
     io.open("/proc/uptime"):read("*a"):match("([%d%.]+)%s*([%d%.]+)");
-  stts.seconds = tonumber(stts.seconds);
-  stts.idle = tonumber(stts.idle);
+  stats.uptime = {
+    seconds = tonumber(seconds),
+    idle    = tonumber(idle)
+  };
 end
 
 function collectLoadStats(stats)
@@ -257,9 +257,6 @@ function collectLoadStats(stats)
   stats.loadavg = stts; 
   stts.load1min, stts.load5min, stts.load15min = io.open(
     "/proc/loadavg"):read("*a"):match("([%d%.]+)%s+([%d%.]+)%s+([%d%.]+)");
-  --stts.load1min  = tonumber(stts.load1min);
-  --stts.load5min  = tonumber(stts.load5min);
-  --stts.load15min = tonumber(stts.load15min);
 end
 
 function collectMemStats(stats)
