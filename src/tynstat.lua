@@ -251,31 +251,12 @@ function collectDfStats(stats)
   end
 end
 
-function collectPsStats(stats)
-  local stts = {};
-  stats.ps = stts;
-  local pr = io.popen("ps -e -o pcpu,pmem,vsize,rss,cputime,user,args " .. 
-                      "--sort -pcpu | head -10");
-  pr:read("*line");
-  for str in pr:lines() do
-    local st = {};
-    collect(stts, st);
-    st.cpu, st.mem, st.vsize, st.rss, st.cputime, st.user, st.args =
-      str:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(.-)%s*$");
-    st.cpu   = 0.01 * tonumber(st.cpu);
-    st.mem   = 0.01 * tonumber(st.mem);
-    st.vsize = tonumber(st.vsize);
-    st.rss   = tonumber(st.rss);
-  end
-end
-
 function collectStats()
   local stats = {};
   collectUptimeStats(stats);
   collectLoadStats(stats);
   collectMemStats(stats);
   collectDfStats(stats);
-  collectPsStats(stats);
   return stats;
 end
 
