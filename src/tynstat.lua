@@ -75,6 +75,10 @@ function collect (t, obj)
   t[#t+1] = obj;
 end
 
+function collectOverwriteLast (t, obj)
+  t[#t] = obj;
+end
+
 function collectAll (t, objs)
   for _, obj in ipairs(objs) do
     collect(t, obj);
@@ -347,15 +351,16 @@ function statObj2Json(obj, tstr, indent)
     elseif objType == "table" then
       local indent = indent or 2;
       local istr = string.rep(" ", indent);
-      collect(tstr, "{\r\n");
+      collect(tstr, "{");
       for k, v in pairs(obj) do
+        collect(tstr, "\r\n");
         collect(tstr, istr);
         statObj2Json(k, tstr, indent + 2);
         collect(tstr, " : ");
         statObj2Json(v, tstr, indent + 2);
-        collect(tstr, ",\r\n");
+        collect(tstr, ",");
       end
-      collect(tstr,  " }");
+      collectOverwriteLast(tstr,  " }");
     else
       collect(tstr, "\"???\"");
     end
