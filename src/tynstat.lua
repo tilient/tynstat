@@ -85,6 +85,30 @@ function collectAll (t, objs)
   end
 end
 
+function find (t, fun)
+  for k, v in pairs(t) do
+    if fun(v) then
+      return v, k;
+    end
+  end
+end
+
+function trim(str)
+  return str:find("^%s*$") and "" or str:match("^%s*(.*%S)");
+end
+
+function asM (num)
+  return string.format("%.2dM", num / 1024);
+end
+
+function asPeriod(sec)
+ local secs, mins  = sec % 60,   math.floor(sec / 60);  
+ local mins, hours = mins % 60,  math.floor(mins / 60);  
+ local hours, days = hours % 24, math.floor(hours / 24);  
+ return string.format("%d days, %dh% dm %ds", 
+                       days, hours, mins, secs);
+end
+
 ----------------------------------------------------------------------------
 --- TCP/IP -----------------------------------------------------------------
 ----------------------------------------------------------------------------
@@ -213,6 +237,12 @@ end
 --- Collection statistics --------------------------------------------------
 ----------------------------------------------------------------------------
 
+function collectInfoStats(stats)
+  local stts = {};
+  stats.info = stts; 
+  stts.hostname = io.popen("hostname"):read("*line");
+end
+
 function collectUptimeStats(stats)
   local stts = {};
   stats.uptime = stts; 
@@ -227,9 +257,9 @@ function collectLoadStats(stats)
   stats.loadavg = stts; 
   stts.load1min, stts.load5min, stts.load15min = io.open(
     "/proc/loadavg"):read("*a"):match("([%d%.]+)%s+([%d%.]+)%s+([%d%.]+)");
-  stts.load1min  = tonumber(stts.load1min);
-  stts.load5min  = tonumber(stts.load5min);
-  stts.load15min = tonumber(stts.load15min);
+  --stts.load1min  = tonumber(stts.load1min);
+  --stts.load5min  = tonumber(stts.load5min);
+  --stts.load15min = tonumber(stts.load15min);
 end
 
 function collectMemStats(stats)
@@ -257,11 +287,53 @@ end
 
 function collectStats()
   local stats = {};
+  collectInfoStats(stats);
   collectUptimeStats(stats);
   collectLoadStats(stats);
   collectMemStats(stats);
   collectDfStats(stats);
   return stats;
+end
+
+
+----------------------------------------------------------------------------
+--- Stats to HTMLLine ------------------------------------------------------
+----------------------------------------------------------------------------
+
+function stats2htmlLine(stats)
+  local tstr = {};
+  collect(tstr, [[<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='description' content='tynstat'>
+    <meta name='viewport' content='width=device-width'>
+    <meta http-equiv='cleartype' content='on'>
+  </head>
+  <body>
+]]);
+
+  collectAll(tstr,{"    <b>", stats.info.hostname, "</b><br/>\r\n"});
+  collectAll(tstr,{"    uptime : ", asPeriod(stats.uptime.seconds), 
+                   "<br/>\r\n"});
+  collectAll(tstr,{"    load average : ", 
+                   stats.loadavg.load1min, ", ",
+                   stats.loadavg.load5min, ", ",
+                   stats.loadavg.load15min, "<br/>\r\n"});
+  collectAll(tstr,{"    memory : ", 
+                    asM(stats.meminfo.MemFree + stats.meminfo.Cached), 
+                    " free (", asM(stats.meminfo.MemTotal), " total, ",
+                    asM(stats.meminfo.Cached), " cached)<br/>\r\n"});
+  local fs = find(stats.df, function(e) return e.mount == "/" end);
+  collectAll(tstr,{"    disk : ", fs.avail, " free (", 
+                   fs.usepercentage, " used of ", fs.size, ")<br/>\r\n"});
+  collectAll(tstr,{"    swap : ",asM( stats.meminfo.SwapFree), " free (of ",
+                    asM(stats.meminfo.SwapTotal), " in total)<br/>\r\n"});
+
+  collect(tstr, [[
+  </body>
+</html>]]);
+  return table.concat(tstr);
 end
 
 ----------------------------------------------------------------------------
@@ -404,6 +476,12 @@ function handleStatsRequest (s)
   repeat cnt = cnt - 1; until (cnt < 0) or (readLine(s):len() <= 0);
 
   if uri == "/html" then
+    local str = stats2htmlLine(collectStats());
+    writeStrings(s, { "HTTP/1.0 200 OK\r\n",
+                      "Content-Type: text/html\r\n",
+                      "Content-Length: ", str:len(), "\r\n\r\n",
+                      str });
+  elseif uri == "/htmlall" then
     local str = stats2html(collectStats());
     writeStrings(s, { "HTTP/1.0 200 OK\r\n",
                       "Content-Type: text/html\r\n",
