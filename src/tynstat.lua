@@ -239,7 +239,7 @@ end
 
 function collectInfoStats(stats)
   stats.info = {
-    hostname = io.popen("hostname"):read("*line")
+    hostname = io.popen("hostname -f"):read("*line")
   };
 end
 
